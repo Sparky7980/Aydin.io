@@ -11,15 +11,6 @@ const player = {
     radius: 20
 };
 
-// Define bot object
-const bot = {
-    x: (canvas.width / 4) * 3,
-    y: canvas.height / 2,
-    speed: 3,
-    color: "green",
-    radius: 20
-};
-
 // Define obstacle objects
 const obstacles = [
     { x: 100, y: 100, width: 200, height: 20 },
@@ -109,20 +100,6 @@ function update() {
         bullets.push({ x: player.x, y: player.y });
     }
 
-    // Update bot movement
-    if (bot.x < player.x) {
-        bot.x += bot.speed;
-    }
-    if (bot.x > player.x) {
-        bot.x -= bot.speed;
-    }
-    if (bot.y < player.y) {
-        bot.y += bot.speed;
-    }
-    if (bot.y > player.y) {
-        bot.y -= bot.speed;
-    }
-
     // Check for collisions with obstacles
     for (let obstacle of obstacles) {
         if (detectCollision(obstacle)) {
@@ -161,13 +138,6 @@ function draw() {
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
     ctx.fillStyle = player.color;
-    ctx.fill();
-    ctx.closePath();
-
-    // Draw bot
-    ctx.beginPath();
-    ctx.arc(bot.x, bot.y, bot.radius, 0, Math.PI * 2);
-    ctx.fillStyle = bot.color;
     ctx.fill();
     ctx.closePath();
 }
