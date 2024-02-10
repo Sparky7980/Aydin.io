@@ -11,17 +11,19 @@ const player = {
     radius: 20
 };
 
-// Define obstacle objects
-const obstacles = [
-    { x: 100, y: 100, width: 200, height: 20 },
-    { x: 400, y: 300, width: 150, height: 20 }
-    // Add more obstacles as needed
-];
+// Define bot object
+const bot = {
+    x: (canvas.width / 4) * 3,
+    y: canvas.height / 2,
+    speed: 2,
+    color: "red",
+    radius: 20
+};
 
-// Define bullet object
+// Define bullets
 const bullets = [];
 
-// Handle keyboard input for player movement and shooting
+// Handle keyboard input for player movement
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
@@ -29,7 +31,6 @@ let rightPressed = false;
 let leftPressed = false;
 let upPressed = false;
 let downPressed = false;
-let spacePressed = false;
 
 function keyDownHandler(event) {
     if (event.key === "Right" || event.key === "ArrowRight") {
@@ -40,8 +41,6 @@ function keyDownHandler(event) {
         upPressed = true;
     } else if (event.key === "Down" || event.key === "ArrowDown") {
         downPressed = true;
-    } else if (event.key === "Space") {
-        spacePressed = true;
     }
 }
 
@@ -54,29 +53,7 @@ function keyUpHandler(event) {
         upPressed = false;
     } else if (event.key === "Down" || event.key === "ArrowDown") {
         downPressed = false;
-    } else if (event.key === "Space") {
-        spacePressed = false;
     }
-}
-
-// Collision detection function
-function detectCollision(obstacle) {
-    const playerLeft = player.x - player.radius;
-    const playerRight = player.x + player.radius;
-    const playerTop = player.y - player.radius;
-    const playerBottom = player.y + player.radius;
-
-    const obstacleLeft = obstacle.x;
-    const obstacleRight = obstacle.x + obstacle.width;
-    const obstacleTop = obstacle.y;
-    const obstacleBottom = obstacle.y + obstacle.height;
-
-    return (
-        playerRight > obstacleLeft &&
-        playerLeft < obstacleRight &&
-        playerBottom > obstacleTop &&
-        playerTop < obstacleBottom
-    );
 }
 
 // Update game state
@@ -95,23 +72,17 @@ function update() {
         player.y -= player.speed;
     }
 
-    // Update bullets
-    if (spacePressed) {
-        bullets.push({ x: player.x, y: player.y });
-    }
-
-    // Check for collisions with obstacles
-    for (let obstacle of obstacles) {
-        if (detectCollision(obstacle)) {
-            // Handle collision
-            // For now, prevent player movement
-            return;
-        }
+    // Update bot movement
+    if (bot.x < player.x) {
+        bot.x += bot.speed;
+    } else {
+        // Bot shoots
+        bullets.push({ x: bot.x, y: bot.y });
     }
 
     // Update bullet positions
     for (let bullet of bullets) {
-        bullet.x += 2; // Adjust bullet speed
+        bullet.x -= 3; // Adjust bullet speed
     }
 }
 
@@ -119,27 +90,28 @@ function update() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw obstacles
-    for (let obstacle of obstacles) {
-        ctx.fillStyle = "#654321"; // Brown color
-        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-    }
-
-    // Draw bullets
-    for (let bullet of bullets) {
-        ctx.beginPath();
-        ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = "red";
-        ctx.fill();
-        ctx.closePath();
-    }
-
     // Draw player
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
     ctx.fillStyle = player.color;
     ctx.fill();
     ctx.closePath();
+
+    // Draw bot
+    ctx.beginPath();
+    ctx.arc(bot.x, bot.y, bot.radius, 0, Math.PI * 2);
+    ctx.fillStyle = bot.color;
+    ctx.fill();
+    ctx.closePath();
+
+    // Draw bullets
+    for (let bullet of bullets) {
+        ctx.beginPath();
+        ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "black";
+        ctx.fill();
+        ctx.closePath();
+    }
 }
 
 // Game loop
