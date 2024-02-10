@@ -11,6 +11,13 @@ const player = {
     radius: 20
 };
 
+// Define obstacle objects
+const obstacles = [
+    { x: 100, y: 100, width: 200, height: 20 },
+    { x: 400, y: 300, width: 150, height: 20 }
+    // Add more obstacles as needed
+];
+
 // Handle keyboard input for player movement
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -44,6 +51,26 @@ function keyUpHandler(event) {
     }
 }
 
+// Collision detection function
+function detectCollision(obstacle) {
+    const playerLeft = player.x - player.radius;
+    const playerRight = player.x + player.radius;
+    const playerTop = player.y - player.radius;
+    const playerBottom = player.y + player.radius;
+
+    const obstacleLeft = obstacle.x;
+    const obstacleRight = obstacle.x + obstacle.width;
+    const obstacleTop = obstacle.y;
+    const obstacleBottom = obstacle.y + obstacle.height;
+
+    return (
+        playerRight > obstacleLeft &&
+        playerLeft < obstacleRight &&
+        playerBottom > obstacleTop &&
+        playerTop < obstacleBottom
+    );
+}
+
 // Update game state
 function update() {
     if (rightPressed && player.x < canvas.width - player.radius) {
@@ -57,11 +84,25 @@ function update() {
     } else if (upPressed && player.y > player.radius) {
         player.y -= player.speed;
     }
+
+    // Check for collisions with obstacles
+    for (let obstacle of obstacles) {
+        if (detectCollision(obstacle)) {
+            // Handle collision - for now, prevent player movement
+            return;
+        }
+    }
 }
 
 // Render the game
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw obstacles
+    for (let obstacle of obstacles) {
+        ctx.fillStyle = "#654321"; // Brown color
+        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    }
 
     // Draw player
     ctx.beginPath();
