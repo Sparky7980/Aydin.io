@@ -23,7 +23,7 @@ const bot = {
 // Define bullets
 const bullets = [];
 
-// Handle keyboard input for player movement
+// Handle keyboard input for player movement and shooting
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
@@ -31,6 +31,7 @@ let rightPressed = false;
 let leftPressed = false;
 let upPressed = false;
 let downPressed = false;
+let spacePressed = false;
 
 function keyDownHandler(event) {
     if (event.key === "Right" || event.key === "ArrowRight") {
@@ -41,6 +42,10 @@ function keyDownHandler(event) {
         upPressed = true;
     } else if (event.key === "Down" || event.key === "ArrowDown") {
         downPressed = true;
+    } else if (event.key === " ") { // Space key for shooting
+        spacePressed = true;
+        // Create a bullet
+        bullets.push({ x: player.x, y: player.y });
     }
 }
 
@@ -53,6 +58,8 @@ function keyUpHandler(event) {
         upPressed = false;
     } else if (event.key === "Down" || event.key === "ArrowDown") {
         downPressed = false;
+    } else if (event.key === " ") {
+        spacePressed = false;
     }
 }
 
@@ -75,14 +82,11 @@ function update() {
     // Update bot movement
     if (bot.x < player.x) {
         bot.x += bot.speed;
-    } else {
-        // Bot shoots
-        bullets.push({ x: bot.x, y: bot.y });
     }
 
     // Update bullet positions
     for (let bullet of bullets) {
-        bullet.x -= 3; // Adjust bullet speed
+        bullet.x += 3; // Adjust bullet speed
     }
 }
 
